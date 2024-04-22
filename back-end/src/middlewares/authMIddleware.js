@@ -1,36 +1,52 @@
-// import JWT from "jsonwebtoken";
+import JWT from "jsonwebtoken";
+import userModel from "../models/userModel.js";
 
-// protected routes token base
-
-// export const requireSignIn = async (req, res, next) => {
+// export const requireSignIn = (req, res, next) => {
 //   try {
-//     const decode = JWT.verify(
+//     const decoded = JWT.verify(
 //       req.headers.authorization,
 //       process.env.JWT_SECRET
-//     );
+//     ); 
+//     req.user= decoded;
 //     next();
 //   } catch (error) {
-//     console.log(error);
-//     res.send({error})
+//     console.error(error);
+//     res.status(401).json({ error: "Failed to authenticate token" });
 //   }
 // };
 
-import JWT from 'jsonwebtoken';
-
 export const requireSignIn = (req, res, next) => {
   try {
-    const authorizationHeader = req.headers.authorization;
-    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'No token provided, or token was invalid' });
-    }
-
-    const token = authorizationHeader.split(' ')[1];
-    const decoded = JWT.verify(token, process.env.JWT_SECRET); // Verify the extracted token
-    req.user = decoded; // Optional: Attach the decoded data to the request object
-    next();
+    const decoded = JWT.verify(
+      req.headers.authorization, // Extract the JWT token from the Authorization header
+      process.env.JWT_SECRET     // Use your JWT secret to verify the token
+    ); 
+    req.user = decoded;          // Attach the decoded user information to the request object
+    next();                      // Proceed to the next middleware
   } catch (error) {
-    console.error(error);
-    res.status(401).json({ error: 'Failed to authenticate token' });
+    console.error(error);        // Log any errors that occur during token verification
+    res.status(401).json({ error: "Failed to authenticate token" }); 
   }
 };
 
+// admin  access
+export const isAdmin = async (req, res, next) => {
+  try {
+    const user = await userModel.findById(req.user._id);
+    if (user.role !== 1) {
+      return res.status(401).send({
+        success: false,
+        message: "UnAutorized Access",
+      });
+    } else {
+      next();
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(401).send({
+      success:false,
+      error,
+      message:'error in admin middelware'
+    })
+  }
+};
