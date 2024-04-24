@@ -1,8 +1,11 @@
 
 
 function Productspage() {
-  return (
-  
+  return(
+    <div>
+        <img src={} alt="product picture"></img>
+
+    </div>
   )
 }
 

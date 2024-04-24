@@ -1,7 +1,6 @@
 // import { Link } from "react-router-dom"
 import { FaRegUser } from "react-icons/fa";
 import { GiShoppingBag } from "react-icons/gi";
-import { FaSearch } from "react-icons/fa";
 function Navbar() {
   return (
     <>
@@ -19,7 +18,7 @@ function Navbar() {
       <li><a>Researchers Hub</a></li>
       <li><a ><FaRegUser /></a></li>
       <li><a ><GiShoppingBag /></a></li>
-     
+    
     </ul>
   </div>
   
