@@ -3,11 +3,26 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routers/authRoutes.js";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const PORT = process.env.PORT;
 
 const app = express();
+
+
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Corrected: Removed the trailing slash and quotes around the URL
+    methods: ["GET", "POST"], // Specify the methods you want to allow
+    credentials: true, // To allow cookies to be sent with requests
+  })
+);
+
+//cookies
+app.use(cookieParser());
 
 //middlwares
 app.use(express.json());
