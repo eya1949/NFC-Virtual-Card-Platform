@@ -1,3 +1,12 @@
+import Navbar from "./components/Navbar";
+import Searchbar from "./components/Searchbar";
+
+export default function App() {
+  return (
+     <>
+    <Navbar/>
+    <Searchbar/>
+    </>
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
