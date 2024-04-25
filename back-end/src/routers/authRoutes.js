@@ -3,8 +3,8 @@ import {
   registerController,
   loginController,
   testController,
-  varifyUser,
-  forgetPassword,
+  resetController,
+  forgetController,
 } from "../controllers/authControllers.js";
 import { isAdmin, requireSignIn } from "../middlewares/authMIddleware.js";
 
@@ -18,6 +18,9 @@ router.post("/login", loginController);
 router.get("/test", requireSignIn, isAdmin, testController);
 
 //forget password 
-router.post("/forgetPassword" , forgetPassword)
+router.post("/forgetPassword" , forgetController)
+
+//reset password 
+router.post("/resetPassword" , resetController)
 
 export default router;

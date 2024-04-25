@@ -32,7 +32,7 @@ app.use(morgan("dev"));
 connectDB();
 
 // routes
-app.use("/api/V1/auth", authRoutes);
+app.use("/api", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("welcome to TAMURT");
@@ -41,3 +41,16 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`server is running on ${PORT}`);
 });
+
+// handle error
+
+app.use((err,req,res,next) =>{
+  const statusCode= err.statusCode || 500;
+  const message =  err.message || 'Internal Server Error'
+  res.status(statusCode).json({
+    success:false,
+    statusCode,
+    message
+  })
+
+})
