@@ -1,11 +1,11 @@
+import MainLayout from "../layout/MainLayout"
 
 
 function Productspage() {
   return(
-    <div>
-        <img src={} alt="product picture"></img>
-
-    </div>
+    <MainLayout>
+      <div><h2>product</h2></div>
+    </MainLayout>
   )
 }
 
