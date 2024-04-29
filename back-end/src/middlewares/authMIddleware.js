@@ -31,9 +31,10 @@ export const requireSignIn = (req, res, next) => {
 
 // admin  access
 export const isAdmin = async (req, res, next) => {
+
   try {
     const user = await userModel.findById(req.user._id);
-    if (user.role !== 1) {
+    if (user.isAdmin !== true) {
       return res.status(401).send({
         success: false,
         message: "UnAutorized Access",
@@ -45,7 +46,7 @@ export const isAdmin = async (req, res, next) => {
     console.log(error);
     res.status(401).send({
       success:false,
-      error,
+      
       message:'error in admin middelware'
     })
   }
