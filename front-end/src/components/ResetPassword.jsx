@@ -1,22 +1,24 @@
+import axios from 'axios';
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import {  useNavigate, useParams } from 'react-router-dom';
 
 export default function ResetPassword() {
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+    const {id, token} =useParams()
 
     axios.defaults.withCredentials = true;
-    const navigate = useNavigate();
-  
     const handleSubmit = (e) => {
       e.preventDefault();
       axios
-        .post("http://localhost:3030/api/V1/auth/forgetPassword", {
-          email,
+        .post("http://localhost:3030/api/resetPassword", {
+          password,
         })
         .then((res) => {
           if (res.data.status === "success") {
-            navigate("/login");
+            navigate("/api/login");
           }
+          console.log(res.data);
         })
         .catch((err) => console.log(err));
     };
@@ -33,7 +35,7 @@ export default function ResetPassword() {
               htmlFor="password"
               className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2"
             >
-              Password
+              NewPassword
             </label>
             <input
               type="password"

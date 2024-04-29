@@ -1,11 +1,11 @@
 import userModel from "../models/userModel.js";
-import { comparePassword, hashPassword } from "../helper/authHelper.js";
-import Jwt, { decode } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
+import User from "../models/userModel.js";
 
-
-export const registerController = async (req, res) => {
+// sign up
+export const signupController = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
@@ -37,7 +37,7 @@ export const registerController = async (req, res) => {
     }
 
     // Hash password
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = bcryptjs.hashSync(password, 10);
 
     // Create user
     const user = await new userModel({
@@ -51,124 +51,50 @@ export const registerController = async (req, res) => {
     // Send success response
     res.status(201).send({
       success: true,
-      message: "User registered successfully",
+      message: "Signup successfull",
       user,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Error in registration",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-//login
+//sign in
 
-// export const loginController = async (req, res) => {
-//   try {
-//     const { email, password } = req.body; // Removed name from here, as it's not needed for login
+export const signinController = async (req, res, next) => {
+  const { email, password } = req.body;
 
-//     // Validation
-//     if (!email || !password) {
-//       return res.status(400).send({ error: "Email and password are required" });
-//     }
+  if (!email || !password || email === "" || password === "") {
+    next(errorHandler(400, "All fields are required"));
+  }
 
-//     // Check user exists
-//     const user = await userModel.findOne({ email });
-//     if (!user) {
-//       return res.status(401).send({ message: "Email is not registered" });
-//     }
-
-//     // Check password match
-//     const match = await comparePassword(password, user.password);
-//     if (!match) {
-//       return res.status(401).send({ message: "Invalid password" });
-//     }
-
-//     // Generate a token
-//     const token = await Jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-//       expiresIn: "7d", // ensure you have a 'JWT_SECRET' in your environment variables
-//     });
-
-//     // Set cookie and respond
-//     res.cookie("token", token);
-//     return res.json({status:"Status", role:user.role})
-
-//     res.status(200).send({
-//       message: "Login successfully",
-//       user: {
-//         _id: user._id,
-//         name: user.name,
-//         email: user.email,
-//       },
-//       token: token // Optionally send token in response body if needed
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send({
-//       success: false,
-//       message: "Error in login process",
-//       error: error.message
-//     });
-//   }
-// };
-export const loginController = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).send({ error: "Email and password are required" });
+    const validUser = await User.findOne({ email });
+    if (!validUser) {
+      return next(errorHandler(404, "User not found"));
     }
-
-    const user = await userModel.findOne({ email });
-    if (!user) {
-      return res.status(401).send({ message: "Email is not registered" });
+    const validPassword = bcryptjs.compareSync(password, validUser.password);
+    if (!validPassword) {
+      return next(errorHandler(400, "Invalid password"));
     }
+    const token = jwt.sign(
+      { id: validUser._id, isAdmin: validUser.isAdmin },
+      process.env.JWT_SECRET
+    );
 
-    const match = await comparePassword(password, user.password);
-    if (!match) {
-      return res.status(401).send({ message: "Invalid password" });
-    }
+    //remove password
+    const { password: pass, ...rest } = validUser._doc;
 
-    const token = await Jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    // Set cookie
-    res.cookie("token", token);
-
-    return res.status(200).json({ status: "success", role: user.role });
+    res
+      .status(200)
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .json(rest);
   } catch (error) {
-    console.error(error);
-    res.status(500).send({
-      success: false,
-      message: "Error in login process",
-      error: error.message,
-    });
+    next(error);
   }
 };
-
-// verfy user
-// export const varifyUser = (req, res, next) => {
-//   const token = req.cookies.token;
-//   if (!token) {
-//     return res.json("Token is missing");
-//   } else {
-//     jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
-//       if (err) {
-//         return res.json("Error with token");
-//       } else {
-//         if (decode.role === 1) {
-//           next();
-//         } else {
-//           return res.json("not admin");
-//         }
-//       }
-//     });
-//   }
-// };
 
 // test
 export const testController = (req, res) => {
@@ -180,116 +106,146 @@ export const testController = (req, res) => {
   }
 };
 
+//auth with google
+
+export const googleController = async (req, res, next) => {
+  const { email, name, googlePhotoUrl } = req.body;
+
+  try {
+    // Check if user already exists
+    const user = await User.findOne({ email });
+    if (user) {
+      const token = jwt.sign(
+        { id: user._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET
+      );
+      const { password, ...rest } = user._doc;
+      res
+        .status(200)
+        .cookie("access_token", token, {
+          httpOnly: true,
+        })
+        .json(rest);
+    } else {
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+      // new user
+      const newUser = new User({
+        username:
+          name.toLowerCase().split(" ").join("") +
+          // Math.random().toString(9).slice(-4),
+        email,
+        password: hashedPassword,
+        profilePicture: googlePhotoUrl,
+      });
+      await newUser.save();
+
+      const token = jwt.sign(
+        { id: newUser._id, isAdmin: newUser.isAdmin },
+        process.env.JWT_SECRET
+      );
+      const { password, ...rest } = newUser._doc;
+      res
+        .status(200)
+        .cookie("access_token", token, {
+          httpOnly: true,
+        })
+        .json(rest);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 //forget password
 
-// export const forgetController = (res, req) => {
+// export const forgetController = (req, res) => {
+//   // Corrected parameters order
 //   const { email } = req.body;
-//   userModel.findOne({ email: email }).then((user) => {
-//     if (!user) {
-//       return res.send({ Status: "User not existed" });
-//     }
-//     const token = jwt.sign({ id: user_id }, process.env.JWT_SECRET, {
-//       expiresIn: "1d",
-//     });
-//     var transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: {
-//         user: "tamurtproduct@gmail.com",
-//         pass: "salmaayaouijdane",
-//       },
-//     });
-
-//     var mailOptions = {
-//       from: "youremail@gmail.com",
-//       to: "myfriend@yahoo.com",
-//       subject: "Reset your password link",
-//       text: `http://localhost:5173/reset-password/${user._id}/${token}`,
-//     };
-
-//     transporter.sendMail(mailOptions, function (error, info) {
-//       if (error) {
-//         console.log(error);
-//       } else {
-//         return res.send ({status:"success"})
+//   userModel
+//     .findOne({ email: email })
+//     .then((user) => {
+//       if (!user) {
+//         return res.send({ Status: "User not existed" });
 //       }
+//       const token = Jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//         expiresIn: "1d",
+//       });
+//       var transporter = nodemailer.createTransport({
+//         service: "gmail",
+//         host: "smtp.gmail.email",
+//         port: 465,
+//         port: true,
+//         auth: {
+//           user: process.env.USER_MAIL,
+//           pass: process.env.APP_PASSWORD,
+//         },
+//       });
+
+//       var mailOptions = {
+//         from: process.env.USER_MAIL,
+//         to: email,
+//         subject: "Reset your password link",
+//         text: `http://localhost:5173/resetPassword/${user._id}/${token}`,
+//       };
+
+//       transporter.sendMail(mailOptions, function (error, info) {
+//         if (error) {
+//           console.log(error);
+//           return res.status(500).send({ Status: "Failed to send email" });
+//         } else {
+//           return res.send({ status: "success" });
+//         }
+//       });
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       return res.status(500).send({ Status: "Internal Server Error" });
 //     });
+// };
+
+//reset password
+// export const resetController =  async (req, res) => {
+//   const { id, token, password } = req.body;
+
+//   // Verify the JWT token
+//   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+//     if (err) {
+//       return res.status(400).json({ Status: "Error with token" });
+//     } else {
+//       // Hash the new password
+//       bcrypt.hash(password, 10)
+//         .try((hash) => {
+//           // Update the user's password in the database
+//           userModel.findByIdAndUpdate(id, { password: hash })
+//             .try((user) => {
+//               if (!user) {
+//                 return res.status(404).json({ Status: "User not found" });
+//               }
+//               return res.status(200).json({ Status: "Password reset successfully" });
+//             })
+//             .catch((err) => {
+//               return res.status(500).json({ Status: "Internal Server Error", Error: err.message });
+//             });
+//         })
+//         .catch((err) => {
+//           return res.status(500).json({ Status: "Error hashing password", Error: err.message });
+//         });
+//     }
 //   });
 // };
 
-export const forgetController = (req, res) => { // Corrected parameters order
-  const { email } = req.body;
-  userModel.findOne({ email: email }).then((user) => {
-    if (!user) {
-      return res.send({ Status: "User not existed" });
-    }
-    const token = Jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-    var transporter = nodemailer.createTransport({
-      service: "gmail",
-      host: "smtp.ethereal.email",
-      port: 587,
-      port:false,
-      auth: {
-        user: process.env.USER_MAIL,
-        pass: process.env.APP_PASSWORD,
-      },
-    });
-
-    var mailOptions = {
-      from: process.env.USER_MAIL, 
-      to: email, 
-      subject: "Reset your password link",
-      text: `http://localhost:5173/resetPassword/${user._id}/${token}`,
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-        return res.status(500).send({ Status: "Failed to send email" });
-      } else {
-        return res.send({ status: "success" }); 
-      }
-    });
-  }).catch(error => {
-    console.log(error);
-    return res.status(500).send({ Status: "Internal Server Error" });
-  });
-};
-
-
-//reset password 
-
-// export const  resetController = (res,req) => {
-//   const {id,token} = req.body
-//   const {password} = req.body
-
-//   jwt.verify(token ,process.env.JWT_SECRET,(err,decoded) => {
-//     if(err) {
-//       return res.json({Status:"error with token"})
-//     } else{
-//       bcrpt.hach(password,10)
-//       .then(hash =>{
-//         userModel.findByIdAndUpdate({_id: id},{password: hash})
-//         .then(u => res.send({Status:"success"}))
-//         .catch(err => res.send({Status:err}))
-//       }) .catch(err => res.send({Status:err}))
-//     }
-//   })
+// export const resetController =  async (req, res) => {
+//   const { token, password } = req.body;
+//   try{
+//     const decoded=jwt.verify(token, process.env.JWT_SECRET)
+//     const id = decoded.id
+//     const hashedPassword= await bcrypt.hash(password,10)
+//     userModel.findByIdAndUpdate({_id:id}, { password: hash })
+//     return res.json({ Status:true,message: "updated password" });
+//   } catch (err) {
+//     return res.json({ Status: "invalid token", Error: err.message })
+//   }
 // }
-
-export const resetController = (req, res) => {
-  const { id, token, password } = req.body; 
-  Jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(400).json({ Status: "Error with token" });
-    } else {
-      bcrypt.hash(password, 10)
-        .then(hash => {
-          userModel.findByIdAndUpdate({ _id: id }, { password: hash })
-            .then(u => res.send({ Status: "success" }))
-            .catch(err => res.status(500).send({ Status: err.message }));
-        }).catch(err => res.status(500).send({ Status: err.message }));
-    }
-  });
-};

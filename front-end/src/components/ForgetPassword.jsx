@@ -8,18 +8,17 @@ export default function ForgetPassword() {
   axios.defaults.withCredentials = true;
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:3030/api/V1/auth/forgetPassword", {
+    await axios
+      .post("http://localhost:3030/api/forgetPassword", {
         email,
       })
       .then((res) => {
         if (res.data.status === "success") {
-          navigate("/login");
+          navigate("/api/login");
         }
-      })
-      .catch((err) => console.log(err));
+      }) .catch((err) => console.log(err));
   };
 
   return (

@@ -8,6 +8,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Please enter your name"],
       trim: true,
+      unique: true,
     },
     email: {
       type: String,
@@ -17,6 +18,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
+      unique: true,
     },
     phone: {
       type: String,
@@ -26,9 +28,14 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
-    role: {
-      type: Number,
-      default: 0,
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    profilePicture: {
+      type: String,
+      default:
+        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
     },
   },
   {
