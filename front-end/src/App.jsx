@@ -15,7 +15,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}></Route>
-          <Route path="/api/signup" element={<SignUp />}></Route>
+          <Route path="/api/auth/signup" element={<SignUp />}></Route>
           <Route path="/api/auth/signin" element={<SignIn />}></Route>
           <Route path="/api/dashbord" element={<Dashbord />}></Route>
           <Route path="/api/forgetPassword" element={<ForgetPassword />}></Route>
