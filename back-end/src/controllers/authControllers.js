@@ -163,6 +163,8 @@ export const googleController = async (req, res, next) => {
 
 // export const forgetController = (req, res) => {
 //   // Corrected parameters order
+//   res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+//   res.header('Access-Control-Allow-Credentials', 'true');
 //   const { email } = req.body;
 //   userModel
 //     .findOne({ email: email })
@@ -170,7 +172,7 @@ export const googleController = async (req, res, next) => {
 //       if (!user) {
 //         return res.send({ Status: "User not existed" });
 //       }
-//       const token = Jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
 //         expiresIn: "1d",
 //       });
 //       var transporter = nodemailer.createTransport({

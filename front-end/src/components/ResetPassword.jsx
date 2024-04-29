@@ -11,7 +11,7 @@ export default function ResetPassword() {
     const handleSubmit = (e) => {
       e.preventDefault();
       axios
-        .post("http://localhost:3030/api/resetPassword", {
+        .post("http://localhost:3030/api/auth/resetpassword", {
           password,
         })
         .then((res) => {

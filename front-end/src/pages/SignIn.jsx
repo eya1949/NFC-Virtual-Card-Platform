@@ -84,6 +84,7 @@ export default function SignUp() {
           <Link to="/api/signup" className="text-blue-500">
             Sign up
           </Link>
+          <p>forget<Link to="/forgetpass">reset</Link></p>
         </div>
         {errorMessage && (
           <Alert className="mt-5" color="failure">
