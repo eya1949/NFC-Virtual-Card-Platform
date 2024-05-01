@@ -81,10 +81,9 @@ export default function SignUp() {
         </form>
         <div className="flex gap-2 text-sm mt-5">
           <span>Dont have an account?</span>
-          <Link to="/api/signup" className="text-blue-500">
+          <Link to="/api/auth/signup" className="text-blue-500">
             Sign up
           </Link>
-          <p>forget<Link to="/forgetpass">reset</Link></p>
         </div>
         {errorMessage && (
           <Alert className="mt-5" color="failure">

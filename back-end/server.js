@@ -6,19 +6,16 @@ import authRoutes from "./src/routers/authRoutes.js";
 import userRoutes from "./src/routers/userRoutes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import bodyParser from "body-parser";
-import helmet from "helmet";
-import User from "./src/models/userModel.js";
 
 //configuration
 dotenv.config();
 const app = express();
 
-app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+// app.use(helmet());
+// app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(cors());
 app.use(
@@ -61,5 +58,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3030;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`); // Improved log message
+  console.log(`Server is running on port ${PORT}`);
 });

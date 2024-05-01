@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/signup",googleController,  signupController);
 
 router.post("/signin", signinController);
-// router.post("/google", googleController);
+router.post("/google", googleController);
 
 // // test routes
 // router.get("/test", requireSignIn, isAdmin, testController);

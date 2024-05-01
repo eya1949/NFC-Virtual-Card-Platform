@@ -33,7 +33,7 @@ export default function SignUp() {
       }
       setLoading(false);
       if (response.status === 200) {
-        navigate("/api/signin");
+        navigate("/api/auth/signin");
       }
     } catch (error) {
       setErrorMessage(error.message);
