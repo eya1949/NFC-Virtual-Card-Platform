@@ -11,12 +11,12 @@ export default function ForgetPassword() {
   const handleSubmit = async(e) => {
     e.preventDefault();
     await axios
-      .post("http://localhost:3030/api/forgetPassword", {
+      .post("http://localhost:3030/api/auth/forgetPassword", {
         email,
       })
       .then((res) => {
         if (res.data.status === "success") {
-          navigate("/api/login");
+          navigate("/");
         }
       }) .catch((err) => console.log(err));
   };

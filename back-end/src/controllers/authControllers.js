@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import bcryptjs from "bcryptjs";
 import User from "../models/userModel.js";
+import { errorHandler } from "../utils/error.js";
 
 // sign up
 export const signupController = async (req, res, next) => {
@@ -126,22 +127,24 @@ export const googleController = async (req, res, next) => {
           httpOnly: true,
         })
         .json(rest);
-    } else {
+    }
+
+    // new user
+    else {
       const generatedPassword =
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8);
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
-      // new user
       const newUser = new User({
         username:
           name.toLowerCase().split(" ").join("") +
           // Math.random().toString(9).slice(-4),
-        email,
+          email,
         password: hashedPassword,
         profilePicture: googlePhotoUrl,
       });
       await newUser.save();
-
+// creat
       const token = jwt.sign(
         { id: newUser._id, isAdmin: newUser.isAdmin },
         process.env.JWT_SECRET
@@ -163,6 +166,8 @@ export const googleController = async (req, res, next) => {
 
 // export const forgetController = (req, res) => {
 //   // Corrected parameters order
+//   res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+//   res.header('Access-Control-Allow-Credentials', 'true');
 //   const { email } = req.body;
 //   userModel
 //     .findOne({ email: email })
@@ -170,7 +175,7 @@ export const googleController = async (req, res, next) => {
 //       if (!user) {
 //         return res.send({ Status: "User not existed" });
 //       }
-//       const token = Jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
 //         expiresIn: "1d",
 //       });
 //       var transporter = nodemailer.createTransport({
