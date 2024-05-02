@@ -26,6 +26,7 @@ app.use(logger)
 //Routes 
 app.use("/api/auth",require("./src/router/auth.js"));
 app.use("/api/users",require("./src/router/users.js"));
+app.use("/api/products",require("./src/router/Product.js"));
 
 
 // Error Handler Middleware
