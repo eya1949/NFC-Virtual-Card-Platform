@@ -40,6 +40,7 @@ connectDB();
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
+// app.use("/api/product",userRoutes)
 
 app.get("/", (req, res) => {
   res.send("welcome to TAMURT");
@@ -56,7 +57,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT ;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

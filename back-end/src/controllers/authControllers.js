@@ -1,11 +1,17 @@
-import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import bcryptjs from "bcryptjs";
-import User from "../models/userModel.js";
 import { errorHandler } from "../utils/error.js";
+import { User}  from "../models/UserModel.js";
 
-// sign up
+
+/**
+ * @desc Register  New user
+ * @route /api/auth/signup
+ * @method Post
+ * @access public 
+ */
+
 export const signupController = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
@@ -28,7 +34,7 @@ export const signupController = async (req, res, next) => {
     }
 
     // Check if user already exists
-    const existingUser = await userModel.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(200).send({
@@ -41,7 +47,7 @@ export const signupController = async (req, res, next) => {
     const hashedPassword = bcryptjs.hashSync(password, 10);
 
     // Create user
-    const user = await new userModel({
+    const user = await new User({
       name,
       email,
       phone,
@@ -60,7 +66,12 @@ export const signupController = async (req, res, next) => {
   }
 };
 
-//sign in
+/**
+ * @desc Login user
+ * @route /api/auth/signin
+ * @method Post
+ * @access public 
+ */
 
 export const signinController = async (req, res, next) => {
   const { email, password } = req.body;
