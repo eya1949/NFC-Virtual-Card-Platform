@@ -28,19 +28,45 @@ export default function SignUp() {
         formData
       );
       const data = response.data;
-      if (data.success === false) {
-        return setErrorMessage(data.message);
-      }
       setLoading(false);
       if (response.status === 200) {
+        console.log("ok");
         navigate("/api/auth/signin");
-      }
+      } 
+      else if (data.success === false) {
+        return setErrorMessage(data.message);
+      } else console.log("not");
     } catch (error) {
       setErrorMessage(error.message);
       setLoading(false);
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.name || !formData.email || !formData.password) {
+  //     return setErrorMessage("Please fill out all fields.");
+  //   }
+  //   try {
+  //     setLoading(true);
+  //     setErrorMessage(null);
+  //     const response = await axios.post(
+  //       "http://localhost:3030/api/auth/signup",
+  //       formData
+  //     );
+  //     const data = response.data;
+  //     setLoading(false);
+
+  //     if (response.status === 200 && data.success) {
+  //       navigate('/api/auth/signin'); // Redirect to sign-in page
+  //     } else {
+  //       setErrorMessage(data.message || "Sign-up failed. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     setErrorMessage(error.message || "Sign-up failed. Please try again.");
+  //     setLoading(false);
+  //   }
+  // };
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
@@ -100,7 +126,7 @@ export default function SignUp() {
         </form>
         <div className="flex gap-2 text-sm mt-5">
           <span>Have an account?</span>
-          <Link to="/api/signin" className="text-blue-500">
+          <Link to="/api/auth/signin" className="text-blue-500">
             Sign In
           </Link>
         </div>
