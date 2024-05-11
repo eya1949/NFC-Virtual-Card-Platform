@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
-import ForgetPassword from "./components/ForgetPassword";
-import ResetPassword from "./components/ResetPassword";
+
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import { ToastContainer } from "react-toastify";
@@ -26,11 +25,6 @@ export default function App() {
           <Route element={<OnlyAdmineRoute />}>
             <Route path="/CreatProduct" element={<Dashboard />}></Route>
           </Route>
-          <Route
-            path="/api/forgetPassword"
-            element={<ForgetPassword />}
-          ></Route>
-          <Route path="/api/resetPassword" element={<ResetPassword />}></Route>
         </Routes>
         <ToastContainer position="top-center" />
       </BrowserRouter>

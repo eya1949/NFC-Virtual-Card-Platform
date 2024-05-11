@@ -5,6 +5,7 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { GiShoppingBag } from "react-icons/gi";
 import { signoutSuccess } from "../redux/User/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function NavBar2() {
   const path = useLocation().pathname;
