@@ -17,6 +17,7 @@
     "firebase": "^10.11.1",
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.9.0",
+    "gsap": "^3.12.5",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "react": "^18.2.0",
@@ -27,7 +28,7 @@
     "react-router-dom": "^6.22.3",
     "react-toastify": "^10.0.5",
     "redux-persist": "^6.0.0",
-    "sort-by": "^1.2.0"
+    "sort-by": "^0.0.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
