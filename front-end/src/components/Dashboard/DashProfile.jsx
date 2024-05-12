@@ -7,21 +7,22 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { app } from "../firebase";
+// import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import {
-  updateStart,
-  updateFailure,
-  updateSuccess,
-  deleteUserSuccess,
-  deleteUserFailure,
-  deleteUserStart,
-} from "../redux/User/userSlice";
+// import {
+//   updateStart,
+//   updateFailure,
+//   updateSuccess,
+//   deleteUserSuccess,
+//   deleteUserFailure,
+//   deleteUserStart,
+// } from "../redux/User/userSlice";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { Link } from "react-router-dom";
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess, updateFailure, updateStart, updateSuccess } from "../../redux/User/userSlice";
 
 export default function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);

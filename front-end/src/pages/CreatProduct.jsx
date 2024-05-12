@@ -32,7 +32,7 @@ export default function CreateProduct() {
             size="sm"
             outline
           >
-            {" "}
+            
             Upload Image
           </Button>
         </div>

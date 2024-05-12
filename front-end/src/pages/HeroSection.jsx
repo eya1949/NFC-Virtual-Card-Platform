@@ -1,12 +1,11 @@
-import React, { useEffect, useRef } from "react";
-import Shop from "./Shop";
-import AboutUs from "./AboutUs";
-import Scientist from "./Scientist";
+import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-// import Lenis from "lenis";
-import Decor from "./Decor";
+import Shop from "../components/landingPage/Shop";
+import AboutUs from "../components/landingPage/AboutUs";
+import Scientist from "../components/landingPage/Scientist";
+import Decor from "../components/landingPage/Decor";
 
 gsap.registerPlugin(ScrollTrigger);
 
