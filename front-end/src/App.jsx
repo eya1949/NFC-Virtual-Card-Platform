@@ -1,23 +1,21 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
-
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import { ToastContainer } from "react-toastify";
-import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from "./pages/Dashbord";
-import NavBar2 from "./components/NavBar2";
-import OnlyAdmineRoute from "./components/OnlyAdmineRoute";
 import HeroSection from "./pages/HeroSection";
+import NavBar from "./components/NavBar";
+import PrivateRoute from "./components/Dashboard/PrivateRoute";
+import OnlyAdmineRoute from "./components/Dashboard/OnlyAdmineRoute";
 
 export default function App() {
   const login = window.localStorage.getItem("isLogeIn");
   return (
     <>
       <BrowserRouter>
-        <NavBar2 />
+      <NavBar/>
         <Routes>
-          <Route path="/" element={<HeroSection/>}></Route>
+          <Route path="/home" element={<HeroSection/>}></Route>
           <Route path="/api/auth/signup" element={<SignUp />}></Route>
           <Route path="/api/auth/signin" element={<SignIn />}></Route>
           <Route element={<PrivateRoute />}>
