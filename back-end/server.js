@@ -4,6 +4,7 @@ import morgan from "morgan";
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routers/authRoutes.js";
 import userRoutes from "./src/routers/userRoutes.js";
+import productRoutes from "./src/routers/productRoutes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -40,7 +41,7 @@ connectDB();
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
-// app.use("/api/product",userRoutes)
+app.use("/api/product",productRoutes)
 
 app.get("/", (req, res) => {
   res.send("welcome to TAMURT");
