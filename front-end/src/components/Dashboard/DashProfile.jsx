@@ -97,35 +97,27 @@ export default function DashProfile() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (Object.keys(formData).length === 0) {
       setUpdateUserError("No changes made");
       return;
     }
-
+  
     try {
       dispatch(updateStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "PUT",
+      const res = await axios.put(`/api/user/update/${currentUser._id}`, formData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        dispatch(updateFailure(data.message));
-        setUpdateUserError(data.message);
-      } else {
-        dispatch(updateSuccess(data));
-        setUpdateUserSuccess("User's profile updated successfully");
-      }
+      const data = res.data;
+      dispatch(updateSuccess(data));
+      setUpdateUserSuccess("User's profile updated successfully");
     } catch (error) {
-      dispatch(updateFailure(error.message));
-      setUpdateUserError(error.message);
+      dispatch(updateFailure(error.response?.data?.message || error.message));
+      setUpdateUserError(error.response?.data?.message || error.message);
     }
   };
 

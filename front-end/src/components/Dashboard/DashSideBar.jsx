@@ -26,7 +26,7 @@ export default function DashSideBar() {
     }
   }, [location.search]);
   //   const handleSignout = async () => {
-  //     try {
+  //     try {  
   //       const res = await fetch('/api/user/signout', {
   //         method: 'POST',
   //       });

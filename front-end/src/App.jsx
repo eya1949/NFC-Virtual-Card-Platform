@@ -3,7 +3,6 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import { ToastContainer } from "react-toastify";
 import Dashboard from "./pages/Dashbord";
-import HeroSection from "./pages/HeroSection";
 import NavBar from "./components/NavBar";
 import PrivateRoute from "./components/Dashboard/PrivateRoute";
 import OnlyAdmineRoute from "./components/Dashboard/OnlyAdmineRoute";
@@ -15,7 +14,7 @@ export default function App() {
       <BrowserRouter>
       <NavBar/>
         <Routes>
-          <Route path="/home" element={<HeroSection/>}></Route>
+          <Route path="/" ></Route>
           <Route path="/api/auth/signup" element={<SignUp />}></Route>
           <Route path="/api/auth/signin" element={<SignIn />}></Route>
           <Route element={<PrivateRoute />}>

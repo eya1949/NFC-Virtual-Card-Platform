@@ -4,7 +4,6 @@ import morgan from "morgan";
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routers/authRoutes.js";
 import userRoutes from "./src/routers/userRoutes.js";
-import productRoutes from "./src/routers/productRoutes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -12,11 +11,6 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 
-// app.use(helmet());
-// app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(cors());
 app.use(
@@ -33,7 +27,6 @@ app.use(cookieParser());
 //middlwares
 app.use(express.json());
 app.use(morgan("common"));
-// app.use(morgan("dev"));
 
 //db config
 connectDB();
@@ -41,7 +34,6 @@ connectDB();
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
-app.use("/api/product",productRoutes)
 
 app.get("/", (req, res) => {
   res.send("welcome to TAMURT");
